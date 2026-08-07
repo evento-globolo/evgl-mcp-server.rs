@@ -1,0 +1,27 @@
+[package]
+org = "evento-globolo"
+name = "evgl-mcp-server"
+version = "0.1.0"
+description = "Read-only MCP server for the evento-globolo organization"
+license = "MIT"
+language = "rust"
+
+[package.repository]
+vcs = "git"
+url = "https://github.com/evento-globolo/evgl-mcp-server.rs"
+
+[install]
+dir = ".vendor/.zed"
+
+[publish]
+include_readme = true
+tag_format = "v{version}"
+exclude = ["target/**", ".vendor/**", ".zed/**", ".env", ".env.*", "*.log"]
+
+[dependencies]
+"evento-globolo/evgl-clients" = "^0.1.0"
+"evento-globolo/evgl-interfaces" = "^0.1.0"
+"evento-globolo/evgl-libs" = "^0.1.0"
+"evento-globolo/evgl-cli" = "^0.1.0"
+"evento-globolo/evgl-sync" = "^0.1.0"
+"shared-auth/shared-auth-clients" = "^0.1.0"

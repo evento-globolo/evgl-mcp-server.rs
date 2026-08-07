@@ -1,0 +1,10 @@
+[package]
+name = "evgl-mcp-server"
+version = "0.1.0"
+edition = "2024"
+description = "Read-only MCP stdio server for the evento-globolo organization"
+license = "MIT"
+publish = false
+
+[dependencies]
+serde_json = "1.0"

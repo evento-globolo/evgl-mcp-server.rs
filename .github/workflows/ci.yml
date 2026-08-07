@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo test --all-targets --all-features
+      - name: Validate canonical Zed dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dependency in \
+            evento-globolo/evgl-clients \
+            evento-globolo/evgl-interfaces \
+            evento-globolo/evgl-libs \
+            evento-globolo/evgl-cli \
+            evento-globolo/evgl-sync \
+            shared-auth/shared-auth-clients
+          do
+            grep -Fq "\"${dependency}\"" .zpkg.toml
+          done
+          grep -Fq 'dir = ".vendor/.zed"' .zpkg.toml
