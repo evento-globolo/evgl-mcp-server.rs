@@ -26,6 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Resolver output is committed before this pull request can merge.
           cargo generate-lockfile
           echo '---BEGIN-CARGO-LOCK---'
           cat Cargo.lock
