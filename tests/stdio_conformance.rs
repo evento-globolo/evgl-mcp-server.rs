@@ -197,7 +197,9 @@ fn official_rmcp_process_preserves_protocol_and_tool_contract() {
                 .expect("parse invalid-argument response");
         assert_eq!(response["error"]["code"], -32602);
     }
-    assert!(!String::from_utf8_lossy(responses.get("10").unwrap()).contains("evento-globolo/unknown"));
+    assert!(
+        !String::from_utf8_lossy(responses.get("10").unwrap()).contains("evento-globolo/unknown")
+    );
 
     let ping: Value = serde_json::from_slice(responses.get("6").expect("ping response"))
         .expect("parse ping response");
@@ -207,7 +209,9 @@ fn official_rmcp_process_preserves_protocol_and_tool_contract() {
         .expect("parse unknown response");
     assert_eq!(unknown["error"]["code"], -32601);
     assert_eq!(unknown["error"]["message"], "method not found");
-    assert!(!String::from_utf8_lossy(responses.get("7").unwrap()).contains("evento-globolo/unknown"));
+    assert!(
+        !String::from_utf8_lossy(responses.get("7").unwrap()).contains("evento-globolo/unknown")
+    );
 }
 
 #[test]
