@@ -1,43 +1,46 @@
-# evgl-mcp-server.rs
+# Evento Globolo MCP Server
 
-Canonical public repository for `evento-globolo/evgl-mcp-server.rs`.
+    Read-only MCP diagnostics for events, venues, attendees, providers, and cross-posting. The server is a Rust MCP process over stdio. Stdout is exclusively the JSON-RPC wire; structured diagnostics go to stderr and optional OTLP.
 
-The server currently implements newline-delimited JSON-RPC over stdio, negotiates MCP protocol revision `2025-06-18`, and exposes a read-only `zed_dependency_graph` tool. It never writes credentials, modifies repositories, or invokes application APIs.
+    ## Tools
 
-The product-neutral dependency-graph model, closed tool descriptor, validation, and text-plus-structured result are supplied by `ore-mcp-zed-graph`, pinned by full Git revision and committed `Cargo.lock`. Product package coordinates and repository policy remain local.
+    - `evgl_fleet_map`
+- `evgl_plan`
+- `evgl_runtime_readiness`
+- `evgl_shared_platform`
+- `evgl_lifecycle_state`
+- `evgl_safety_boundary`
 
-The official-`rmcp` lifecycle and final `2025-11-25` protocol migration are separate DEN-957 work and are not claimed complete by this repository-recovery change.
+    Every tool is read-only. Planning accepts a closed workload enum plus bounded numeric fields. The server has no arbitrary URL, command, filesystem, database, GitHub mutation, cluster mutation, or secret-value input.
 
-## Canonical Zed graph
+    ## Product topology
 
-- `evento-globolo/evgl-clients`
-- `evento-globolo/evgl-interfaces`
-- `evento-globolo/evgl-libs`
-- `evento-globolo/evgl-cli`
-- `evento-globolo/evgl-sync`
-- `shared-auth/shared-auth-clients`
+    - `evgl-api` — global event-management and cross-posting API
+- `evgl-interfaces` — event, venue, attendee, and provider contracts
+- `evento-globolo-libs` — event and cross-posting policy libraries
+- `evgl-sync` — offline-first draft, attendee, and venue sync
+- `evgl-infra` — Kubernetes and bounded Cloudflare edge infrastructure
 
-Packages materialize under `.vendor/.zed`.
+    ## Security boundary
 
-## Repository delivery
+    - The MCP server never publishes, cancels, imports, or cross-posts an event.
+- Attendee identities, tickets, and provider credentials are excluded.
+- Capacity plans are deterministic advisory calculations, not safety certification.
 
-The repository is live on GitHub. The initial source history was published through the authenticated recovery lane tracked by DEN-2290 and DEN-2797. There is no local `publish.sh` step to run after cloning this repository.
+    The shared core is pinned at `c6101656c8227251d1dbd61df54f03a186b42ade`. It provides bounded MCP framing, explicit OTLP/gRPC traces, metrics and logs, JSON stderr diagnostics, redaction, low-cardinality tool metrics, and the formal runtime lifecycle. Each tool also owns an explicit span with `skip_all`; arguments and results are never recorded. Configuration readiness reports environment-variable presence only and performs no authentication or network request.
 
-Subsequent changes must use a focused feature branch and reviewed pull request. Do not rewrite the initial history, force-push shared refs, or place personal access tokens in Git configuration, source, workflow inputs, logs, issues, or pull requests.
+    This server contains no authenticated HTTP client. If a future tool adds one, it must use fixed or strictly validated HTTP(S) origins, reject credentials/query/fragment/private/metadata targets, disable redirects and ambient proxies, keep credentials in sensitive headers, cap every response, and add adversarial tests before merge.
 
-Exact recovery and rebase evidence, including the shared-graph base commit and the still-missing sibling E2E repository, is recorded in [`docs/recovery-delivery.md`](docs/recovery-delivery.md).
+    ## Shared platform knowledge
 
-## Validate
+    The bounded `shared_platform` tool documents ORE Kubernetes, shared definitions, dpm, Cloudflare/Squarespace, Supabase, and Fiducia without exposing a mutation or credential surface.
 
-```bash
-cargo metadata --locked --format-version 1 >/dev/null
-cargo fmt --all -- --check
-cargo clippy --locked --all-targets --all-features -- -D warnings
-cargo test --locked --all-targets --all-features
-```
+    ## Validate
 
-## Git submodules and Zed
-
-A composing monorepo may retain this repository as an exact committed gitlink. Zed remains authoritative for package identity and dependency intent. Adopt a canonical existing gitlink with `zed overtake --git-submodules`; do not create a second long-name coordinate, a duplicate workspace path, or an uncommitted submodule checkout.
-
-Tracking: `evento-globolo/.github#4`, GitHub Project #1, DEN-2290, DEN-2797, DEN-957, and the `github.com/evento-globolo` Linear project.
+    ```sh
+    cargo fmt --all -- --check
+    cargo clippy --locked --all-targets --all-features -- -D warnings
+    cargo test --locked --all-targets --all-features
+    cargo build --locked --release
+    cargo audit --deny warnings
+    ```
