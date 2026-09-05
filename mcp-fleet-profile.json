@@ -3,7 +3,7 @@
   "identity": {
     "organization": "evento-globolo",
     "repository": "evento-globolo/evgl-mcp-server.rs",
-    "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+    "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee",
     "linearIssue": "DEN-965",
     "serverName": "evgl-mcp-server",
     "summary": "Read-only Evento Globolo MCP diagnostics combine event-domain planning with exact, bounded provider posture for the organization's delivery planes."
@@ -19,7 +19,7 @@
           {
             "kind": "source_test",
             "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers",
-            "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+            "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee",
             "verifiedAt": "2026-09-05T00:00:00Z"
           }
         ]
@@ -33,7 +33,7 @@
           {
             "kind": "source_test",
             "reference": "src/http.rs#main",
-            "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+            "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee",
             "verifiedAt": "2026-09-05T00:00:00Z"
           }
         ]
@@ -55,12 +55,12 @@
     }
   },
   "clients": [
-    {"id": "cursor", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
-    {"id": "openai", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
-    {"id": "anthropic", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
-    {"id": "gemini", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
-    {"id": "grok", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
-    {"id": "qwen", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]}
+    {"id": "cursor", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "openai", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "anthropic", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "gemini", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "grok", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "qwen", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]}
   ],
   "integrations": [
     {
@@ -75,7 +75,7 @@
         {"name": "read_organization", "mode": "read", "description": "Read a bounded projection of the exact Evento Globolo GitHub organization and its declared product ownership.", "organizationScope": "github.com/evento-globolo", "timeoutMs": 10000, "outputMaxBytes": 524288},
         {"name": "read_latest_workflow_run", "mode": "read", "description": "Read the latest bounded Actions result for the exact Evento Globolo MCP repository only.", "organizationScope": "github.com/evento-globolo/evgl-mcp-server.rs", "timeoutMs": 10000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "aws",
@@ -89,7 +89,7 @@
         {"name": "read_caller_identity", "mode": "read", "description": "Verify the configured AWS caller identity against the exact Evento Globolo account boundary without exposing credentials.", "organizationScope": "AWS account EVGL_AWS_ACCOUNT_ID", "timeoutMs": 15000, "outputMaxBytes": 524288},
         {"name": "read_eks_clusters", "mode": "read", "description": "List only EKS clusters in the exact configured Evento Globolo allowlist and region boundary.", "organizationScope": "EKS clusters EVGL_AWS_EKS_CLUSTERS", "timeoutMs": 15000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "gcp",
@@ -103,7 +103,7 @@
         {"name": "read_project", "mode": "read", "description": "Read metadata for the exact configured Evento Globolo Google Cloud project and no other project.", "organizationScope": "GCP project EVGL_GCP_PROJECT_ID", "timeoutMs": 10000, "outputMaxBytes": 524288},
         {"name": "read_enabled_services", "mode": "read", "description": "List bounded enabled-service state for the exact Evento Globolo Google Cloud project number.", "organizationScope": "GCP project EVGL_GCP_PROJECT_NUMBER", "timeoutMs": 10000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "supabase",
@@ -117,7 +117,7 @@
         {"name": "read_auth_settings", "mode": "read", "description": "Read a safe projection of the exact Evento Globolo Supabase auth settings without returning keys or user data.", "organizationScope": "Supabase origin EVGL_SUPABASE_URL", "timeoutMs": 10000, "outputMaxBytes": 524288},
         {"name": "read_data_api_schema", "mode": "read", "description": "Read bounded exposed-path metadata from the exact Evento Globolo Supabase Data API schema.", "organizationScope": "Supabase origin EVGL_SUPABASE_URL", "timeoutMs": 10000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "neon",
@@ -131,7 +131,7 @@
         {"name": "read_projects", "mode": "read", "description": "List a bounded Neon project projection filtered to the exact Evento Globolo product scope.", "organizationScope": "Neon organization EVGL_NEON_ORGANIZATION_ID", "timeoutMs": 10000, "outputMaxBytes": 524288},
         {"name": "read_project_branches", "mode": "read", "description": "List safe branch state for one exact configured Evento Globolo Neon project.", "organizationScope": "Neon project EVGL_NEON_PROJECT_ID", "timeoutMs": 10000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "cloudflare",
@@ -145,7 +145,7 @@
         {"name": "read_zone", "mode": "read", "description": "Read bounded metadata for the exact Evento Globolo Cloudflare zone and no other zone.", "organizationScope": "Cloudflare zone EVGL_CLOUDFLARE_ZONE", "timeoutMs": 10000, "outputMaxBytes": 524288},
         {"name": "read_dns_records", "mode": "read", "description": "Read bounded DNS metadata for the exact Evento Globolo zone without returning record content or secrets.", "organizationScope": "Cloudflare zone EVGL_CLOUDFLARE_ZONE_ID", "timeoutMs": 10000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "k8s_cluster",
@@ -159,7 +159,7 @@
         {"name": "read_deployments", "mode": "read", "description": "List bounded deployment readiness in the exact Evento Globolo namespace on ORESoftware/k8s-cluster.", "organizationScope": "ORESoftware/k8s-cluster namespace evento-globolo", "timeoutMs": 15000, "outputMaxBytes": 524288},
         {"name": "read_pods", "mode": "read", "description": "List bounded pod readiness for the exact Evento Globolo part-of selector and namespace.", "organizationScope": "namespace evento-globolo selector app.kubernetes.io/part-of=evento-globolo", "timeoutMs": 15000, "outputMaxBytes": 524288}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     },
     {
       "id": "nats",
@@ -173,7 +173,7 @@
         {"name": "read_service_snapshot", "mode": "read", "description": "Request a bounded snapshot on the exact Evento Globolo service subject without wildcard access.", "organizationScope": "NATS subject evento-globolo.mcp.service.read.v1", "timeoutMs": 5000, "outputMaxBytes": 131072},
         {"name": "read_dependency_snapshot", "mode": "read", "description": "Request a bounded dependency snapshot on the exact Evento Globolo NATS subject.", "organizationScope": "NATS subject evento-globolo.mcp.dependencies.read.v1", "timeoutMs": 5000, "outputMaxBytes": 131072}
       ],
-      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}]
     }
   ],
   "organizationSurface": {
@@ -215,12 +215,16 @@
     "resources": [
       {"uri": "orgmap://evento-globolo", "description": "Exact Evento Globolo repositories, services, deployment namespace, and shared provider ownership boundaries.", "mimeType": "text/markdown"},
       {"uri": "contract://evento-globolo/mcp-clients", "description": "Evento Globolo MCP client compatibility and Shared Auth boundary contract for local and remote clients.", "mimeType": "text/markdown"},
-      {"uri": "contract://evento-globolo/providers", "description": "Five-state provider semantics and exact read-only Evento Globolo infrastructure scopes across all eight provider planes.", "mimeType": "text/markdown"}
+      {"uri": "contract://evento-globolo/providers", "description": "Five-state provider semantics and exact read-only Evento Globolo infrastructure scopes across all eight provider planes.", "mimeType": "text/markdown"},
+      {"uri": "docs://evento-globolo/event-lifecycle", "description": "The bounded Evento Globolo event-draft, venue-capacity, and cross-posting lifecycle and its mutation boundary.", "mimeType": "text/markdown"},
+      {"uri": "docs://evento-globolo/provider-routing", "description": "The exact Evento Globolo provider planes and delivery boundaries used by its event platform.", "mimeType": "text/markdown"}
     ],
     "prompts": [
       {"name": "deploy_readiness", "description": "Assess Evento Globolo deployment readiness using the complete provider posture while preserving explicit evidence gaps and blockers.", "referencedTools": ["organization_posture"]},
       {"name": "provider_triage", "description": "Triage one Evento Globolo provider dependency read-only and distinguish missing configuration from authentication, authorization, or availability failure.", "referencedTools": ["organization_posture", "github_posture", "aws_posture", "gcp_posture", "supabase_posture", "neon_posture", "cloudflare_posture", "k8s_posture", "nats_posture"]},
-      {"name": "dependency_review", "description": "Review Evento Globolo repository ownership, Zed dependencies, Kubernetes delivery, and NATS contracts without mutating provider state.", "referencedTools": ["organization_posture", "evgl_fleet_map", "evgl_shared_platform"]}
+      {"name": "dependency_review", "description": "Review Evento Globolo repository ownership, Zed dependencies, Kubernetes delivery, and NATS contracts without mutating provider state.", "referencedTools": ["organization_posture", "evgl_fleet_map", "evgl_shared_platform"]},
+      {"name": "event_release_readiness", "description": "Assess Evento Globolo event-release readiness without publishing or mutating an event or attendee record.", "referencedTools": ["organization_posture", "evgl_plan", "evgl_safety_boundary"]},
+      {"name": "cross_posting_review", "description": "Review an Evento Globolo cross-posting plan against provider readiness, exact ownership, and the product mutation boundary.", "referencedTools": ["organization_posture", "evgl_fleet_map", "evgl_shared_platform", "evgl_safety_boundary"]}
     ],
     "composedReadTool": "organization_posture"
   },
@@ -236,13 +240,13 @@
   },
   "evidence": {
     "repositoryTests": [
-      {"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"},
-      {"kind": "source_test", "reference": "tests/stdio_integration.rs", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}
+      {"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"},
+      {"kind": "source_test", "reference": "tests/stdio_integration.rs", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}
     ],
     "testOrganization": {
       "repository": "oresoftware-test/mcp-fleet-conformance",
-      "productionRevision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
-      "evidence": {"kind": "test_org_run", "reference": "https://github.com/oresoftware-test/mcp-fleet-conformance/actions/runs/33465425881", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}
+      "productionRevision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee",
+      "evidence": {"kind": "test_org_run", "reference": "https://github.com/oresoftware-test/mcp-fleet-conformance/actions/runs/33465425881", "revision": "bd0cf13552f150f79c3d01d9a98329bb73fb0dee", "verifiedAt": "2026-09-05T00:00:00Z"}
     },
     "sharedLibraryRevision": "7db434c7849ad153342e0daaac8a8f6f1d2dea5e",
     "lockfileCommitted": true
