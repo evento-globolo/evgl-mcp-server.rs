@@ -5,9 +5,15 @@ use std::sync::Arc;
 use ores_mcp_server_core_libs::observability::{ToolClass, ToolMetrics, ToolOutcome};
 use ores_mcp_server_core_libs::state_machine::LifecycleController;
 use rmcp::{
-    ServerHandler,
+    ErrorData as McpError, RoleServer, ServerHandler,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
-    model::{Implementation, ServerCapabilities, ServerInfo},
+    model::{
+        GetPromptRequestParams, GetPromptResult, Implementation, ListPromptsResult,
+        ListResourcesResult, PaginatedRequestParams, Prompt, PromptMessage,
+        ReadResourceRequestParams, ReadResourceResult, Resource, ResourceContents, Role,
+        ServerCapabilities, ServerInfo,
+    },
+    service::RequestContext,
     tool, tool_handler, tool_router,
 };
 use serde_json::Value;
@@ -129,8 +135,67 @@ impl EventoGloboloMCPServer {
 
 #[tool_handler(router = self.tool_router)]
 impl ServerHandler for EventoGloboloMCPServer {
+    async fn list_resources(
+        &self,
+        _request: Option<PaginatedRequestParams>,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ListResourcesResult, McpError> {
+        let resources = knowledge::resources()
+            .iter()
+            .map(|resource| {
+                Resource::new(resource.uri, resource.name)
+                    .with_description(resource.description)
+                    .with_mime_type("text/markdown")
+            })
+            .collect();
+        Ok(ListResourcesResult::with_all_items(resources))
+    }
+
+    async fn read_resource(
+        &self,
+        request: ReadResourceRequestParams,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ReadResourceResult, McpError> {
+        let resource = knowledge::resource(&request.uri)
+            .ok_or_else(|| McpError::resource_not_found("unknown Evento Globolo resource", None))?;
+        Ok(ReadResourceResult::new(vec![
+            ResourceContents::text(resource.body, resource.uri).with_mime_type("text/markdown"),
+        ]))
+    }
+
+    async fn list_prompts(
+        &self,
+        _request: Option<PaginatedRequestParams>,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ListPromptsResult, McpError> {
+        let prompts = knowledge::prompts()
+            .iter()
+            .map(|prompt| Prompt::new(prompt.name, Some(prompt.description), None))
+            .collect();
+        Ok(ListPromptsResult::with_all_items(prompts))
+    }
+
+    async fn get_prompt(
+        &self,
+        request: GetPromptRequestParams,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<GetPromptResult, McpError> {
+        let prompt = knowledge::prompt(&request.name)
+            .ok_or_else(|| McpError::invalid_params("unknown Evento Globolo prompt", None))?;
+        Ok(
+            GetPromptResult::new(vec![PromptMessage::new_text(Role::User, prompt.text)])
+                .with_description(prompt.description),
+        )
+    }
+
     fn get_info(&self) -> ServerInfo {
-        ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
+        ServerInfo::new(
+            ServerCapabilities::builder()
+                .enable_tools()
+                .enable_resources()
+                .enable_prompts()
+                .build(),
+        )
             .with_server_info(Implementation::new(SERVER_NAME, env!("CARGO_PKG_VERSION")).with_title("Evento Globolo MCP Server"))
             .with_instructions("Read-only MCP diagnostics for events, venues, attendees, providers, and cross-posting. The server is read-only and never logs MCP arguments or results.")
     }
