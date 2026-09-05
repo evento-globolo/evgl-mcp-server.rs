@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "organization": "evento-globolo",
+    "repository": "evento-globolo/evgl-mcp-server.rs",
+    "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+    "linearIssue": "DEN-965",
+    "serverName": "evgl-mcp-server",
+    "summary": "Read-only Evento Globolo MCP diagnostics combine event-domain planning with exact, bounded provider posture for the organization's delivery planes."
+  },
+  "protocol": {
+    "finalRevision": "2025-11-25",
+    "transports": [
+      {
+        "kind": "stdio",
+        "enabled": true,
+        "authentication": "process_boundary",
+        "evidence": [
+          {
+            "kind": "source_test",
+            "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers",
+            "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+            "verifiedAt": "2026-09-05T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "kind": "streamable_http",
+        "enabled": true,
+        "authentication": "oauth_2_1",
+        "endpointPath": "/mcp",
+        "evidence": [
+          {
+            "kind": "source_test",
+            "reference": "src/http.rs#main",
+            "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+            "verifiedAt": "2026-09-05T00:00:00Z"
+          }
+        ]
+      }
+    ],
+    "remoteAuthorization": {
+      "authority": "shared-auth",
+      "protectedResourceMetadata": true,
+      "wwwAuthenticateChallenge": true,
+      "audienceBound": true,
+      "authorizedClientValidated": true,
+      "realmValidated": true,
+      "noTokenPassthrough": true,
+      "exactHostPolicy": true,
+      "credentialedRedirectsDisabled": true,
+      "credentialedAmbientProxyDisabled": true,
+      "requestBodyMaxBytes": 262144,
+      "responseBodyMaxBytes": 524288
+    }
+  },
+  "clients": [
+    {"id": "cursor", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "openai", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "anthropic", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "gemini", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "grok", "role": "mcp_client", "transports": ["streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]},
+    {"id": "qwen", "role": "mcp_client", "transports": ["stdio", "streamable_http"], "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]}
+  ],
+  "integrations": [
+    {
+      "id": "github",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_GITHUB_TOKEN", "GITHUB_TOKEN", "GH_TOKEN"],
+      "allowedOrigins": ["https://api.github.com"],
+      "scopes": ["organization:evento-globolo", "repository:evgl-mcp-server.rs", "actions:read"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_organization", "mode": "read", "description": "Read a bounded projection of the exact Evento Globolo GitHub organization and its declared product ownership.", "organizationScope": "github.com/evento-globolo", "timeoutMs": 10000, "outputMaxBytes": 524288},
+        {"name": "read_latest_workflow_run", "mode": "read", "description": "Read the latest bounded Actions result for the exact Evento Globolo MCP repository only.", "organizationScope": "github.com/evento-globolo/evgl-mcp-server.rs", "timeoutMs": 10000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "aws",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_AWS_ACCOUNT_ID", "EVGL_AWS_EKS_CLUSTERS", "AWS_REGION"],
+      "allowedOrigins": ["aws-sdk://configured-account"],
+      "scopes": ["sts:GetCallerIdentity", "eks:ListClusters", "account:EVGL_AWS_ACCOUNT_ID"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_caller_identity", "mode": "read", "description": "Verify the configured AWS caller identity against the exact Evento Globolo account boundary without exposing credentials.", "organizationScope": "AWS account EVGL_AWS_ACCOUNT_ID", "timeoutMs": 15000, "outputMaxBytes": 524288},
+        {"name": "read_eks_clusters", "mode": "read", "description": "List only EKS clusters in the exact configured Evento Globolo allowlist and region boundary.", "organizationScope": "EKS clusters EVGL_AWS_EKS_CLUSTERS", "timeoutMs": 15000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "gcp",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_GCP_PROJECT_ID", "EVGL_GCP_PROJECT_NUMBER", "EVGL_GCP_ACCESS_TOKEN"],
+      "allowedOrigins": ["https://cloudresourcemanager.googleapis.com", "https://serviceusage.googleapis.com"],
+      "scopes": ["resourcemanager.projects.get", "serviceusage.services.list", "project:EVGL_GCP_PROJECT_ID"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_project", "mode": "read", "description": "Read metadata for the exact configured Evento Globolo Google Cloud project and no other project.", "organizationScope": "GCP project EVGL_GCP_PROJECT_ID", "timeoutMs": 10000, "outputMaxBytes": 524288},
+        {"name": "read_enabled_services", "mode": "read", "description": "List bounded enabled-service state for the exact Evento Globolo Google Cloud project number.", "organizationScope": "GCP project EVGL_GCP_PROJECT_NUMBER", "timeoutMs": 10000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "supabase",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_SUPABASE_URL", "EVGL_SUPABASE_SERVICE_ROLE_KEY"],
+      "allowedOrigins": ["https://configured-project.supabase.co"],
+      "scopes": ["exact-project-origin", "auth.settings:read", "rest.openapi:read"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_auth_settings", "mode": "read", "description": "Read a safe projection of the exact Evento Globolo Supabase auth settings without returning keys or user data.", "organizationScope": "Supabase origin EVGL_SUPABASE_URL", "timeoutMs": 10000, "outputMaxBytes": 524288},
+        {"name": "read_data_api_schema", "mode": "read", "description": "Read bounded exposed-path metadata from the exact Evento Globolo Supabase Data API schema.", "organizationScope": "Supabase origin EVGL_SUPABASE_URL", "timeoutMs": 10000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "neon",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_NEON_ORGANIZATION_ID", "EVGL_NEON_PROJECT_ID", "EVGL_NEON_API_KEY"],
+      "allowedOrigins": ["https://console.neon.tech"],
+      "scopes": ["projects:read", "branches:read", "search:evento-globolo"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_projects", "mode": "read", "description": "List a bounded Neon project projection filtered to the exact Evento Globolo product scope.", "organizationScope": "Neon organization EVGL_NEON_ORGANIZATION_ID", "timeoutMs": 10000, "outputMaxBytes": 524288},
+        {"name": "read_project_branches", "mode": "read", "description": "List safe branch state for one exact configured Evento Globolo Neon project.", "organizationScope": "Neon project EVGL_NEON_PROJECT_ID", "timeoutMs": 10000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "cloudflare",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_CLOUDFLARE_ZONE", "EVGL_CLOUDFLARE_ZONE_ID", "EVGL_CLOUDFLARE_API_TOKEN"],
+      "allowedOrigins": ["https://api.cloudflare.com"],
+      "scopes": ["zone:EVGL_CLOUDFLARE_ZONE", "zone:read", "dns:read-without-content"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_zone", "mode": "read", "description": "Read bounded metadata for the exact Evento Globolo Cloudflare zone and no other zone.", "organizationScope": "Cloudflare zone EVGL_CLOUDFLARE_ZONE", "timeoutMs": 10000, "outputMaxBytes": 524288},
+        {"name": "read_dns_records", "mode": "read", "description": "Read bounded DNS metadata for the exact Evento Globolo zone without returning record content or secrets.", "organizationScope": "Cloudflare zone EVGL_CLOUDFLARE_ZONE_ID", "timeoutMs": 10000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "k8s_cluster",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_K8S_ENABLED", "EVGL_K8S_NAMESPACE", "KUBECONFIG"],
+      "allowedOrigins": ["kubeconfig://evento-globolo"],
+      "scopes": ["namespace:evento-globolo", "deployments:list", "pods:list", "selector:app.kubernetes.io/part-of=evento-globolo"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_deployments", "mode": "read", "description": "List bounded deployment readiness in the exact Evento Globolo namespace on ORESoftware/k8s-cluster.", "organizationScope": "ORESoftware/k8s-cluster namespace evento-globolo", "timeoutMs": 15000, "outputMaxBytes": 524288},
+        {"name": "read_pods", "mode": "read", "description": "List bounded pod readiness for the exact Evento Globolo part-of selector and namespace.", "organizationScope": "namespace evento-globolo selector app.kubernetes.io/part-of=evento-globolo", "timeoutMs": 15000, "outputMaxBytes": 524288}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    },
+    {
+      "id": "nats",
+      "role": "upstream_service",
+      "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"},
+      "configurationKeys": ["EVGL_NATS_URL"],
+      "allowedOrigins": ["nats://configured-evento-globolo"],
+      "scopes": ["evento-globolo.mcp.service.read.v1", "evento-globolo.mcp.dependencies.read.v1"],
+      "stateModel": ["ready", "not_configured", "degraded", "unauthorized", "forbidden"],
+      "operations": [
+        {"name": "read_service_snapshot", "mode": "read", "description": "Request a bounded snapshot on the exact Evento Globolo service subject without wildcard access.", "organizationScope": "NATS subject evento-globolo.mcp.service.read.v1", "timeoutMs": 5000, "outputMaxBytes": 131072},
+        {"name": "read_dependency_snapshot", "mode": "read", "description": "Request a bounded dependency snapshot on the exact Evento Globolo NATS subject.", "organizationScope": "NATS subject evento-globolo.mcp.dependencies.read.v1", "timeoutMs": 5000, "outputMaxBytes": 131072}
+      ],
+      "evidence": [{"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}]
+    }
+  ],
+  "organizationSurface": {
+    "repositories": [
+      "evento-globolo/evgl-mcp-server.rs",
+      "evento-globolo/evgl-api",
+      "evento-globolo/evgl-interfaces",
+      "evento-globolo/evento-globolo-libs",
+      "evento-globolo/evgl-sync",
+      "evento-globolo/evgl-infra"
+    ],
+    "services": ["evgl-mcp-server", "evgl-api", "evgl-provider-plane"],
+    "kubernetesNamespaces": ["evento-globolo"],
+    "natsSubjects": ["evento-globolo.mcp.service.read.v1", "evento-globolo.mcp.dependencies.read.v1"],
+    "runbooks": ["README.md#Validate", "SECURITY.md"],
+    "tools": [
+      {"name": "org_identity", "description": "Return the immutable Evento Globolo ownership, service, client, and read-only access contract for fleet automation.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["github", "k8s_cluster"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "zed_dependency_graph", "description": "Return the exact Evento Globolo Zed dependency graph so package provenance and provider ownership remain auditable.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "telemetry_status", "description": "Report bounded telemetry readiness for Evento Globolo MCP diagnostics without exposing endpoints, credentials, or high-cardinality data.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["nats"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "shared_auth_policy", "description": "Describe the Shared Auth boundary required by Evento Globolo clients and provider calls without accepting or returning token values.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "environment_policy", "description": "Report the Evento Globolo encrypted-environment and process-boundary policy using presence-only configuration metadata.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "security_baseline", "description": "Return the bounded Evento Globolo MCP security baseline covering exact origins, output limits, and mutation denial.", "implementation": {"module": "src/parity.rs", "symbol": "org_spec", "test": "tests/stdio_parity.rs"}, "integrations": ["github", "k8s_cluster"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "github_posture", "description": "Read exact Evento Globolo GitHub organization and MCP workflow posture with bounded output and explicit authentication failure states.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "aws_posture", "description": "Verify exact Evento Globolo AWS identity and allowlisted EKS cluster posture while preserving unauthorized and not-configured states.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["aws"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "gcp_posture", "description": "Read the exact Evento Globolo Google Cloud project and bounded enabled-service state without crossing project boundaries.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["gcp"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "supabase_posture", "description": "Read bounded Evento Globolo Supabase auth and Data API posture without accepting SQL or returning service-role material.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["supabase"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "neon_posture", "description": "Read Evento Globolo-filtered Neon project and branch posture while excluding connection strings and credential values.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["neon"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "cloudflare_posture", "description": "Read exact Evento Globolo Cloudflare zone and bounded DNS posture without exposing record content or enabling mutations.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["cloudflare"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "k8s_posture", "description": "Read Evento Globolo deployment and pod readiness from ORESoftware/k8s-cluster in one exact namespace and selector boundary.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["k8s_cluster"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "nats_posture", "description": "Request bounded Evento Globolo service and dependency snapshots over exact NATS subjects without wildcard access.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["nats"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 131072},
+      {"name": "organization_posture", "description": "Compose exact Evento Globolo GitHub, AWS, GCP, Supabase, Neon, Cloudflare, Kubernetes, and NATS reads into one bounded readiness view.", "implementation": {"module": "src/parity.rs", "symbol": "PROVIDER_OPERATIONS", "test": "tests/stdio_parity.rs"}, "integrations": ["github", "aws", "gcp", "supabase", "neon", "cloudflare", "k8s_cluster", "nats"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_fleet_map", "description": "Return the Evento Globolo repository topology and component roles so agents can orient to the event and cross-posting product boundary.", "implementation": {"module": "src/server.rs", "symbol": "evgl_fleet_map", "test": "tests/stdio_integration.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_plan", "description": "Calculate a bounded deterministic Evento Globolo event, venue, or cross-posting capacity plan without executing or mutating provider state.", "implementation": {"module": "src/server.rs", "symbol": "evgl_plan", "test": "tests/stdio_integration.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_runtime_readiness", "description": "Report presence-only Evento Globolo runtime configuration readiness without reading values, authenticating, or making network requests.", "implementation": {"module": "src/server.rs", "symbol": "evgl_runtime_readiness", "test": "tests/stdio_integration.rs"}, "integrations": ["github"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_shared_platform", "description": "Return bounded Evento Globolo knowledge of shared Kubernetes, Supabase, Cloudflare, telemetry, and authentication platform boundaries.", "implementation": {"module": "src/server.rs", "symbol": "evgl_shared_platform", "test": "tests/stdio_integration.rs"}, "integrations": ["github", "k8s_cluster", "supabase", "cloudflare"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_lifecycle_state", "description": "Return the formal Evento Globolo MCP lifecycle state and bounded transition audit without allowing callers to trigger transitions.", "implementation": {"module": "src/server.rs", "symbol": "evgl_lifecycle_state", "test": "tests/stdio_integration.rs"}, "integrations": ["nats"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288},
+      {"name": "evgl_safety_boundary", "description": "Return the product-specific Evento Globolo privacy and safety boundary covering attendee data, credentials, and cross-posting mutations.", "implementation": {"module": "src/server.rs", "symbol": "evgl_safety_boundary", "test": "tests/stdio_integration.rs"}, "integrations": ["github", "k8s_cluster"], "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}, "inputSchemaClosed": true, "outputMaxBytes": 524288}
+    ],
+    "resources": [
+      {"uri": "orgmap://evento-globolo", "description": "Exact Evento Globolo repositories, services, deployment namespace, and shared provider ownership boundaries.", "mimeType": "text/markdown"},
+      {"uri": "contract://evento-globolo/mcp-clients", "description": "Evento Globolo MCP client compatibility and Shared Auth boundary contract for local and remote clients.", "mimeType": "text/markdown"},
+      {"uri": "contract://evento-globolo/providers", "description": "Five-state provider semantics and exact read-only Evento Globolo infrastructure scopes across all eight provider planes.", "mimeType": "text/markdown"}
+    ],
+    "prompts": [
+      {"name": "deploy_readiness", "description": "Assess Evento Globolo deployment readiness using the complete provider posture while preserving explicit evidence gaps and blockers.", "referencedTools": ["organization_posture"]},
+      {"name": "provider_triage", "description": "Triage one Evento Globolo provider dependency read-only and distinguish missing configuration from authentication, authorization, or availability failure.", "referencedTools": ["organization_posture", "github_posture", "aws_posture", "gcp_posture", "supabase_posture", "neon_posture", "cloudflare_posture", "k8s_posture", "nats_posture"]},
+      {"name": "dependency_review", "description": "Review Evento Globolo repository ownership, Zed dependencies, Kubernetes delivery, and NATS contracts without mutating provider state.", "referencedTools": ["organization_posture", "evgl_fleet_map", "evgl_shared_platform"]}
+    ],
+    "composedReadTool": "organization_posture"
+  },
+  "security": {
+    "secretsEnvironmentOnly": true,
+    "secretValuesExcluded": true,
+    "stdoutProtocolOnly": true,
+    "boundedLowCardinalityTelemetry": true,
+    "exactOriginAllowlists": true,
+    "credentialedRedirectsDisabled": true,
+    "credentialedAmbientProxyDisabled": true,
+    "mutationGate": {"defaultDenied": true, "runtimeAuthorization": true, "allowlistedTargets": true, "dryRun": true, "targetBoundConfirmation": true, "idempotency": true, "boundedAudit": true}
+  },
+  "evidence": {
+    "repositoryTests": [
+      {"kind": "source_test", "reference": "tests/stdio_parity.rs#stdio_wire_contract_names_all_clients_and_providers", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"},
+      {"kind": "source_test", "reference": "tests/stdio_integration.rs", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}
+    ],
+    "testOrganization": {
+      "repository": "oresoftware-test/mcp-fleet-conformance",
+      "productionRevision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040",
+      "evidence": {"kind": "test_org_run", "reference": "https://github.com/oresoftware-test/mcp-fleet-conformance/actions/runs/33465425881", "revision": "212fbd0bf9e1772deeafcb0e5bdef7ea6272c040", "verifiedAt": "2026-09-05T00:00:00Z"}
+    },
+    "sharedLibraryRevision": "7db434c7849ad153342e0daaac8a8f6f1d2dea5e",
+    "lockfileCommitted": true
+  }
+}
