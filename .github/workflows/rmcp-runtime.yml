@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SHARED_MCP_REV: c6101656c8227251d1dbd61df54f03a186b42ade
+  SHARED_MCP_REV: 7db434c7849ad153342e0daaac8a8f6f1d2dea5e
 
 jobs:
   runtime:
@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [1.88.0, 1.97.1]
+        rust: [1.95.0, 1.97.0]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -44,9 +44,9 @@ jobs:
           set -euo pipefail
           test -s Cargo.lock
           test "$(grep -Fc "rev = \"${SHARED_MCP_REV}\"" Cargo.toml)" -eq 1
-          grep -Fq 'ores-mcp-server-core-libs' Cargo.toml
+          grep -Fq 'ore-mcp-org-server' Cargo.toml
           grep -Fq "#${SHARED_MCP_REV}\"" Cargo.lock
-          grep -Fq 'version = "=3.1.4"' Cargo.toml
+          grep -Fq 'version = "=2.2.0"' Cargo.toml
           cargo metadata --locked --format-version 1 >/dev/null
           git diff --exit-code -- Cargo.lock
 
@@ -63,8 +63,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq 'ProtocolVersion::V_2026_07_28' src/server.rs
-          grep -Fq 'ProtocolVersion::V_2025_06_18' src/server.rs
+          grep -Fq 'protocolVersion":"2025-11-25' tests/stdio_integration.rs
           grep -Fq 'tracing::instrument' src/server.rs
           grep -Fq 'real_process_negotiates_and_lists_namespaced_tools_without_stdout_noise' tests/stdio_integration.rs
           if grep -R -F 'read_line' src || grep -R -F 'println!' src; then
