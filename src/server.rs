@@ -1,13 +1,13 @@
 //! Typed, read-only MCP tool routing.
 
-use std::{borrow::Cow, sync::Arc};
+use std::sync::Arc;
 
 use ores_mcp_server_core_libs::observability::{ToolClass, ToolMetrics, ToolOutcome};
 use ores_mcp_server_core_libs::state_machine::LifecycleController;
 use rmcp::{
     ServerHandler,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
-    model::{Implementation, ProtocolVersion, ServerCapabilities, ServerInfo},
+    model::{Implementation, ServerCapabilities, ServerInfo},
     tool, tool_handler, tool_router,
 };
 use serde_json::Value;
@@ -19,6 +19,7 @@ use crate::{
 
 pub const SERVER_NAME: &str = "evgl-mcp-server";
 pub const SERVER_NAMESPACE: &str = "evento-globolo";
+const MAX_TOOL_OUTPUT_BYTES: usize = 512 * 1024;
 
 #[derive(Clone)]
 pub struct EventoGloboloMCPServer {
@@ -128,14 +129,6 @@ impl EventoGloboloMCPServer {
 
 #[tool_handler(router = self.tool_router)]
 impl ServerHandler for EventoGloboloMCPServer {
-    fn supported_protocol_versions(&self) -> Cow<'static, [ProtocolVersion]> {
-        Cow::Borrowed(&[
-            ProtocolVersion::V_2026_07_28,
-            ProtocolVersion::V_2025_11_25,
-            ProtocolVersion::V_2025_06_18,
-        ])
-    }
-
     fn get_info(&self) -> ServerInfo {
         ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
             .with_server_info(Implementation::new(SERVER_NAME, env!("CARGO_PKG_VERSION")).with_title("Evento Globolo MCP Server"))
@@ -144,8 +137,11 @@ impl ServerHandler for EventoGloboloMCPServer {
 }
 
 fn render(value: &Value) -> String {
-    serde_json::to_string(value)
-        .unwrap_or_else(|_| r#"{"error":"serialization failed"}"#.to_string())
+    match serde_json::to_string(value) {
+        Ok(rendered) if rendered.len() <= MAX_TOOL_OUTPUT_BYTES => rendered,
+        Ok(_) => r#"{"error":"bounded output limit exceeded"}"#.to_string(),
+        Err(_) => r#"{"error":"serialization failed"}"#.to_string(),
+    }
 }
 
 #[cfg(test)]

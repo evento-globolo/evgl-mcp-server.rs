@@ -15,7 +15,7 @@ async fn real_process_negotiates_and_lists_namespaced_tools_without_stdout_noise
 
     let mut stdin = child.stdin.take().expect("piped stdin");
     stdin.write_all(concat!(
-            r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","capabilities":{},"clientInfo":{"name":"fleet-smoke","version":"1"}}}"#,
+            r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"fleet-smoke","version":"1"}}}"#,
             "
 ",
             r#"{"jsonrpc":"2.0","method":"notifications/initialized"}"#,
@@ -66,7 +66,7 @@ fn architecture_reserves_stdout_and_uses_explicit_low_cardinality_telemetry() {
     assert!(server.contains("skip_all"));
     assert!(!server.contains("mcp.tool.arguments"));
     assert!(!server.contains("mcp.tool.result"));
-    assert!(manifest.contains("c6101656c8227251d1dbd61df54f03a186b42ade"));
+    assert!(manifest.contains("e559a76f869c2c2d9bf939b510d358a3924abd81"));
 }
 
 #[test]
