@@ -1,15 +1,23 @@
 //! Typed, read-only MCP tool routing.
 
-use std::{borrow::Cow, sync::Arc};
+use std::sync::Arc;
 
 use ores_mcp_server_core_libs::observability::{ToolClass, ToolMetrics, ToolOutcome};
 use ores_mcp_server_core_libs::state_machine::LifecycleController;
 use rmcp::{
-    ServerHandler,
+    ErrorData as McpError, RoleServer, ServerHandler,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
-    model::{Implementation, ProtocolVersion, ServerCapabilities, ServerInfo},
+    model::{
+        GetPromptRequestParams, GetPromptResult, Implementation, ListPromptsResult,
+        ListResourcesResult, PaginatedRequestParams, Prompt, PromptMessage,
+        ReadResourceRequestParams, ReadResourceResult, Resource, ResourceContents, Role,
+        ServerCapabilities, ServerInfo,
+    },
+    service::RequestContext,
     tool, tool_handler, tool_router,
 };
+use schemars::JsonSchema;
+use serde::Deserialize;
 use serde_json::Value;
 
 use crate::{
@@ -19,6 +27,11 @@ use crate::{
 
 pub const SERVER_NAME: &str = "evgl-mcp-server";
 pub const SERVER_NAMESPACE: &str = "evento-globolo";
+const MAX_TOOL_OUTPUT_BYTES: usize = 512 * 1024;
+
+#[derive(Debug, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct EmptyRequest {}
 
 #[derive(Clone)]
 pub struct EventoGloboloMCPServer {
@@ -41,10 +54,16 @@ impl EventoGloboloMCPServer {
 #[tool_router]
 impl EventoGloboloMCPServer {
     #[tool(
-        description = "Return the product-owned repository topology and component roles. Pure, local, and read-only."
+        description = "Return the product-owned repository topology and component roles. Pure, local, and read-only.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_fleet_map", mcp.tool.class = "inventory"))]
-    fn evgl_fleet_map(&self) -> String {
+    fn evgl_fleet_map(&self, Parameters(_): Parameters<EmptyRequest>) -> String {
         let timer = self.metrics.start(ToolClass::Inventory);
         let output = render(&domain::fleet_map());
         timer.finish(ToolOutcome::Ok);
@@ -52,7 +71,13 @@ impl EventoGloboloMCPServer {
     }
 
     #[tool(
-        description = "Calculate a bounded, deterministic product plan from a closed workload enum and numeric units. Never executes or mutates anything."
+        description = "Calculate a bounded, deterministic product plan from a closed workload enum and numeric units. Never executes or mutates anything.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_plan", mcp.tool.class = "details"))]
     fn evgl_plan(&self, Parameters(input): Parameters<PlanInput>) -> Result<String, String> {
@@ -67,10 +92,16 @@ impl EventoGloboloMCPServer {
     }
 
     #[tool(
-        description = "Report presence-only configuration readiness. Values are never read into output, logged, or authenticated; no network request is made."
+        description = "Report presence-only configuration readiness. Values are never read into output, logged, or authenticated; no network request is made.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_runtime_readiness", mcp.tool.class = "health"))]
-    fn evgl_runtime_readiness(&self) -> String {
+    fn evgl_runtime_readiness(&self, Parameters(_): Parameters<EmptyRequest>) -> String {
         let timer = self.metrics.start(ToolClass::Health);
         let output = render(&domain::runtime_readiness());
         timer.finish(ToolOutcome::Ok);
@@ -78,10 +109,16 @@ impl EventoGloboloMCPServer {
     }
 
     #[tool(
-        description = "Return bounded shared knowledge for ORE Kubernetes, shared definitions, dpm, Cloudflare/Squarespace, Supabase, and Fiducia. Descriptive only."
+        description = "Return bounded shared knowledge for ORE Kubernetes, shared definitions, dpm, Cloudflare/Squarespace, Supabase, and Fiducia. Descriptive only.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_shared_platform", mcp.tool.class = "inventory"))]
-    fn evgl_shared_platform(&self) -> String {
+    fn evgl_shared_platform(&self, Parameters(_): Parameters<EmptyRequest>) -> String {
         let timer = self.metrics.start(ToolClass::Inventory);
         let output = render(&knowledge::shared_platform());
         timer.finish(ToolOutcome::Ok);
@@ -89,10 +126,19 @@ impl EventoGloboloMCPServer {
     }
 
     #[tool(
-        description = "Return the formal runtime lifecycle state, monotonic revision, and bounded transition audit. Callers cannot trigger transitions."
+        description = "Return the formal runtime lifecycle state, monotonic revision, and bounded transition audit. Callers cannot trigger transitions.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_lifecycle_state", mcp.tool.class = "health"))]
-    fn evgl_lifecycle_state(&self) -> Result<String, String> {
+    fn evgl_lifecycle_state(
+        &self,
+        Parameters(_): Parameters<EmptyRequest>,
+    ) -> Result<String, String> {
         let timer = self.metrics.start(ToolClass::Health);
         let result = self
             .lifecycle
@@ -115,10 +161,16 @@ impl EventoGloboloMCPServer {
     }
 
     #[tool(
-        description = "Return the product-specific safety and privacy boundary. Pure, local, and read-only."
+        description = "Return the product-specific safety and privacy boundary. Pure, local, and read-only.",
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
     )]
     #[tracing::instrument(name = "mcp.tool", skip_all, fields(mcp.tool.name = "evgl_safety_boundary", mcp.tool.class = "inventory"))]
-    fn evgl_safety_boundary(&self) -> String {
+    fn evgl_safety_boundary(&self, Parameters(_): Parameters<EmptyRequest>) -> String {
         let timer = self.metrics.start(ToolClass::Inventory);
         let output = render(&domain::safety_boundary());
         timer.finish(ToolOutcome::Ok);
@@ -128,24 +180,78 @@ impl EventoGloboloMCPServer {
 
 #[tool_handler(router = self.tool_router)]
 impl ServerHandler for EventoGloboloMCPServer {
-    fn supported_protocol_versions(&self) -> Cow<'static, [ProtocolVersion]> {
-        Cow::Borrowed(&[
-            ProtocolVersion::V_2026_07_28,
-            ProtocolVersion::V_2025_11_25,
-            ProtocolVersion::V_2025_06_18,
-        ])
+    async fn list_resources(
+        &self,
+        _request: Option<PaginatedRequestParams>,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ListResourcesResult, McpError> {
+        let resources = knowledge::resources()
+            .iter()
+            .map(|resource| {
+                Resource::new(resource.uri, resource.name)
+                    .with_description(resource.description)
+                    .with_mime_type("text/markdown")
+            })
+            .collect();
+        Ok(ListResourcesResult::with_all_items(resources))
+    }
+
+    async fn read_resource(
+        &self,
+        request: ReadResourceRequestParams,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ReadResourceResult, McpError> {
+        let resource = knowledge::resource(&request.uri)
+            .ok_or_else(|| McpError::resource_not_found("unknown Evento Globolo resource", None))?;
+        Ok(ReadResourceResult::new(vec![
+            ResourceContents::text(resource.body, resource.uri).with_mime_type("text/markdown"),
+        ]))
+    }
+
+    async fn list_prompts(
+        &self,
+        _request: Option<PaginatedRequestParams>,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ListPromptsResult, McpError> {
+        let prompts = knowledge::prompts()
+            .iter()
+            .map(|prompt| Prompt::new(prompt.name, Some(prompt.description), None))
+            .collect();
+        Ok(ListPromptsResult::with_all_items(prompts))
+    }
+
+    async fn get_prompt(
+        &self,
+        request: GetPromptRequestParams,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<GetPromptResult, McpError> {
+        let prompt = knowledge::prompt(&request.name)
+            .ok_or_else(|| McpError::invalid_params("unknown Evento Globolo prompt", None))?;
+        Ok(
+            GetPromptResult::new(vec![PromptMessage::new_text(Role::User, prompt.text)])
+                .with_description(prompt.description),
+        )
     }
 
     fn get_info(&self) -> ServerInfo {
-        ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
+        ServerInfo::new(
+            ServerCapabilities::builder()
+                .enable_tools()
+                .enable_resources()
+                .enable_prompts()
+                .build(),
+        )
             .with_server_info(Implementation::new(SERVER_NAME, env!("CARGO_PKG_VERSION")).with_title("Evento Globolo MCP Server"))
             .with_instructions("Read-only MCP diagnostics for events, venues, attendees, providers, and cross-posting. The server is read-only and never logs MCP arguments or results.")
     }
 }
 
 fn render(value: &Value) -> String {
-    serde_json::to_string(value)
-        .unwrap_or_else(|_| r#"{"error":"serialization failed"}"#.to_string())
+    match serde_json::to_string(value) {
+        Ok(rendered) if rendered.len() <= MAX_TOOL_OUTPUT_BYTES => rendered,
+        Ok(_) => r#"{"error":"bounded output limit exceeded"}"#.to_string(),
+        Err(_) => r#"{"error":"serialization failed"}"#.to_string(),
+    }
 }
 
 #[cfg(test)]

@@ -4,5 +4,6 @@
 
 pub mod domain;
 pub mod knowledge;
+pub mod parity;
 pub mod runtime;
 pub mod server;

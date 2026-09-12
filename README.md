@@ -1,6 +1,6 @@
 # Evento Globolo MCP Server
 
-    Read-only MCP diagnostics for events, venues, attendees, providers, and cross-posting. The server is a Rust MCP process over stdio. Stdout is exclusively the JSON-RPC wire; structured diagnostics go to stderr and optional OTLP.
+    Read-only MCP diagnostics for events, venues, attendees, providers, and cross-posting. The server is a Rust MCP process over stdio or Shared Auth-protected Streamable HTTP at `/mcp`. Stdout is exclusively the JSON-RPC wire; structured diagnostics go to stderr and optional OTLP.
 
     ## Tools
 
@@ -12,6 +12,24 @@
 - `evgl_safety_boundary`
 
     Every tool is read-only. Planning accepts a closed workload enum plus bounded numeric fields. The server has no arbitrary URL, command, filesystem, database, GitHub mutation, cluster mutation, or secret-value input.
+
+    ## Fleet parity
+
+    The shared `ore-mcp-org-server` layer adds the same bounded provider posture
+    contract used by every hardened organization server: GitHub, AWS, GCP,
+    Supabase, NeonDB, Cloudflare, `ORESoftware/k8s-cluster`, and NATS. Each
+    provider reports one of `ready`, `not_configured`, `degraded`,
+    `unauthorized`, or `forbidden`; missing credentials are evidence gaps, not
+    successful health checks. The parity layer also publishes exact ownership,
+    Zed dependency, Shared Auth, encrypted-environment, and security resources
+    plus deploy-readiness, provider-triage, and dependency-review prompts.
+
+    Remote clients (Cursor, ChatGPT/OpenAI, Anthropic/Claude, Gemini, Grok, and
+    Qwen) use the final MCP protocol revision and OAuth 2.1 Shared Auth
+    boundary. Provider credentials stay in the process environment; tokens are
+    never accepted as tool arguments, forwarded to upstreams, or returned in
+    diagnostics. Requests and results are bounded and credentialed HTTP
+    redirects and ambient proxies are disabled by the shared runtime.
 
     ## Product topology
 
@@ -38,6 +56,8 @@
     ## Validate
 
     ```sh
+    cargo run --bin evgl-mcp-server
+    cargo run --bin evgl-mcp-http
     cargo fmt --all -- --check
     cargo clippy --locked --all-targets --all-features -- -D warnings
     cargo test --locked --all-targets --all-features
